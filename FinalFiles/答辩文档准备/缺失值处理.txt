@@ -1,0 +1,12 @@
+# 直接丢弃缺失数据列的行
+print df4.dropna(axis=0,subset=['col1'])  # 丢弃nan的行,subset指定查看哪几列 
+print df4.dropna(axis=1)  # 丢弃nan的列
+# 采用其他值填充
+dataset['Cabin'] = dataset['Cabin'].fillna('U') 
+dataset['Title'] = dataset['Title'].fillna(0) 
+# 采用出现最频繁的值填充
+freq_port = train_df.Embarked.dropna().mode()[0]
+dataset['Embarked'] = dataset['Embarked'].fillna(freq_port)
+# 采用中位数或者平均数填充
+test_df['Fare'].fillna(test_df['Fare'].dropna().median(), inplace=True)
+test_df['Fare'].fillna(test_df['Fare'].dropna().mean(), inplace=True)
