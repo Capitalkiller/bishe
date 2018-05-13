@@ -4,7 +4,8 @@ from sklearn import svm
 from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.cross_validation import cross_val_score
+# from sklearn.cross_validation import cross_val_score
+from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
 
 
@@ -173,23 +174,23 @@ if __name__ == "__main__":
     X = normal_data
     y = newLabels['labels']
     # 划分训练集和预测集
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    # PCA降维过程
-    pca = PCA(n_components = 'mle',copy = False).fit(X_train)
-    X_train_pca = pca.transform(X_train)
-    X_test_pca = pca.transform(X_test)
-    # 输出降维后的结果
-    print(X_train_pca.shape)
-    print("各成分占总方差比例：")
-    print(pca.explained_variance_ratio_ )
-    print("各成分方差：")
-    print(pca.explained_variance_ )
+    # 设置stratify = y时，我们发现每次划分后，测试集和训练集中的类标签比例同原始的样本中类标签的比例相同
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=1, stratify=y)
+    # # PCA降维过程
+    # pca = PCA(n_components = 'mle',copy = False).fit(X_train)
+    # X_train_pca = pca.transform(X_train)
+    # X_test_pca = pca.transform(X_test)
+    # # 输出降维后的结果
+    # print(X_train_pca.shape)
+    # print("各成分占总方差比例：")
+    # print(pca.explained_variance_ratio_ )
+    # print("各成分方差：")
+    # print(pca.explained_variance_ )
 
     # 进行预测
-    # kNN在k = 16时效果最好，约在64%-80%
+    # kNN
     clf = KNeighborsClassifier(n_neighbors=16, algorithm='auto', weights='distance')
     clf.fit(X_train, y_train)
-    predict = clf.predict(X_test)
     print("kNN算法预测准确率为：", clf.score(X_test, y_test))
     # 绘制图像显示不同K值对应的预测准确率
     k_range = range(1, 31)
@@ -197,29 +198,26 @@ if __name__ == "__main__":
     for k in k_range:
         clf = KNeighborsClassifier(n_neighbors=k)
         # loss = -cross_val_score(clf, X, y, cv=10, scoring='mean_squared_error') # for regression
+        # 当cv参数是一个整型时，cross_val_score默认使用KFold 或StratifiedKFold的方法
         scores = cross_val_score(clf, X, y, cv=10, scoring='accuracy')  # for classification
         k_scores.append(scores.mean())
     plt.plot(k_range, k_scores)
     plt.xlabel('Value of K for KNN')
-    plt.ylabel('Cross-Validated Accuracy')  # 当cv参数是一个整型时，cross_val_score默认使用KFold 或StratifiedKFold的方法，
+    plt.ylabel('Cross-Validated Accuracy')
     plt.show()
 
-    # SVC(kernel='linear')随机种子为1时66%，随机种子为0时66%
-    clf = svm.SVC(kernel='linear')
+    # SVC(kernel='linear')
+    clf = svm.SVC(kernel='linear',decision_function_shape='ovo')
     clf.fit(X_train, y_train)
-    predict = clf.predict(X_test)
     print("SVM算法(kernel='linear')预测准确率为：", clf.score(X_test, y_test))
 
-    # SVC(kernel='poly')随机种子为1时57%，随机种子为0时60%
-    clf = svm.SVC(kernel='poly')
+    # SVC(kernel='poly')
+    clf = svm.SVC(kernel='poly',decision_function_shape='ovo')
     clf.fit(X_train, y_train)
-    predict = clf.predict(X_test)
     print("SVM算法(kernel='poly')预测准确率为：", clf.score(X_test, y_test))
 
-    # SVC(kernel='rbf')随机种子为1时64%，随机种子为0时65%
-    # 产生linear核函数比rbf结果更好的原因是，使用了默认参数，未对rbf参数进行调优，调优后结果好于linear
-    clf = svm.SVC(kernel='rbf')
+    # SVC(kernel='rbf')
+    clf = svm.SVC(kernel='rbf',decision_function_shape='ovo')
     clf.fit(X_train, y_train)
-    predict = clf.predict(X_test)
     print("SVM算法(kernel='rbf')预测准确率为：", clf.score(X_test, y_test))
 
