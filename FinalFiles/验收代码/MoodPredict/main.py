@@ -4,6 +4,9 @@ from sklearn import svm
 from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import BernoulliNB
 # from sklearn.cross_validation import cross_val_score
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
@@ -221,3 +224,15 @@ if __name__ == "__main__":
     clf.fit(X_train, y_train)
     print("SVM算法(kernel='rbf')预测准确率为：", clf.score(X_test, y_test))
 
+    # 高斯朴素贝叶斯
+    clf = GaussianNB().fit(X_train, y_train)
+    print("高斯朴素贝叶斯算法预测准确率为：", clf.score(X_test, y_test))
+
+    # 多项式分布
+    clf = MultinomialNB().fit(X_train, y_train)
+    print("多项式分布朴素贝叶斯算法预测准确率为：", clf.score(X_test, y_test))
+
+    # 伯努利分布
+    clf = BernoulliNB()
+    clf.fit(X_train, y_train)
+    print("伯努利分布贝叶斯算法预测准确率为：", clf.score(X_test, y_test))
