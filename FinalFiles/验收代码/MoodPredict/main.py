@@ -10,6 +10,7 @@ from sklearn.naive_bayes import BernoulliNB
 # from sklearn.cross_validation import cross_val_score
 from sklearn.model_selection import cross_val_score
 import matplotlib.pyplot as plt
+import time
 
 
 def importData():
@@ -192,16 +193,19 @@ if __name__ == "__main__":
 
     # 进行预测
     # kNN
+    t0 = time.time()
     clf = KNeighborsClassifier(n_neighbors=16, algorithm='auto', weights='distance')
     clf.fit(X_train, y_train)
+    t1 = time.time()
     print("kNN算法预测准确率为：", clf.score(X_test, y_test))
+    print("耗时%0.3fs" % (t1 - t0))
     # 绘制图像显示不同K值对应的预测准确率
     k_range = range(1, 31)
     k_scores = []
     for k in k_range:
         clf = KNeighborsClassifier(n_neighbors=k)
         # loss = -cross_val_score(clf, X, y, cv=10, scoring='mean_squared_error') # for regression
-        # 当cv参数是一个整型时，cross_val_score默认使用KFold 或StratifiedKFold的方法
+        # 当cv参数是一个整型时，cross_val_score默认使用KFold 或StratifiedKFold的方法进行数据集打乱
         scores = cross_val_score(clf, X, y, cv=10, scoring='accuracy')  # for classification
         k_scores.append(scores.mean())
     plt.plot(k_range, k_scores)
@@ -210,29 +214,47 @@ if __name__ == "__main__":
     plt.show()
 
     # SVC(kernel='linear')
+    t0 = time.time()
     clf = svm.SVC(kernel='linear',decision_function_shape='ovo')
     clf.fit(X_train, y_train)
-    print("SVM算法(kernel='linear')预测准确率为：", clf.score(X_test, y_test))
+    t1 = time.time()
+    print("SVC算法(kernel='linear')预测准确率为：", clf.score(X_test, y_test))
+    print("耗时%0.3fs" % (t1 - t0))
 
     # SVC(kernel='poly')
+    t0 = time.time()
     clf = svm.SVC(kernel='poly',decision_function_shape='ovo')
     clf.fit(X_train, y_train)
-    print("SVM算法(kernel='poly')预测准确率为：", clf.score(X_test, y_test))
+    t1 = time.time()
+    print("SVC算法(kernel='poly')预测准确率为：", clf.score(X_test, y_test))
+    print("耗时%0.3fs" % (t1 - t0))
 
     # SVC(kernel='rbf')
+    t0 = time.time()
     clf = svm.SVC(kernel='rbf',decision_function_shape='ovo')
     clf.fit(X_train, y_train)
-    print("SVM算法(kernel='rbf')预测准确率为：", clf.score(X_test, y_test))
+    t1 = time.time()
+    print("SVC算法(kernel='rbf')预测准确率为：", clf.score(X_test, y_test))
+    print("耗时%0.3fs" % (t1 - t0))
 
     # 高斯朴素贝叶斯
+    t0 = time.time()
     clf = GaussianNB().fit(X_train, y_train)
+    t1 = time.time()
     print("高斯朴素贝叶斯算法预测准确率为：", clf.score(X_test, y_test))
+    print("耗时%0.3fs" % (t1 - t0))
 
     # 多项式分布
+    t0 = time.time()
     clf = MultinomialNB().fit(X_train, y_train)
+    t1 = time.time()
     print("多项式分布朴素贝叶斯算法预测准确率为：", clf.score(X_test, y_test))
+    print("耗时%0.3fs" % (t1 - t0))
 
     # 伯努利分布
+    t0 = time.time()
     clf = BernoulliNB()
     clf.fit(X_train, y_train)
+    t1 = time.time()
     print("伯努利分布贝叶斯算法预测准确率为：", clf.score(X_test, y_test))
+    print("耗时%0.3fs" % (t1 - t0))
