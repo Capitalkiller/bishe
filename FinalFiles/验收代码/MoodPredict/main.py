@@ -193,6 +193,8 @@ if __name__ == "__main__":
     # print(pca.explained_variance_ )
 
     # 进行预测
+    print("最后十个数据为：")
+    print(X_test.tail(10))
     # kNN
     t0 = time.time()
     clf = KNeighborsClassifier(n_neighbors=16, algorithm='auto', weights='distance')
